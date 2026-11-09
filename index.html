@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Degree Completion Countdown</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.3);
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --border-color: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        p.subtitle {
+            color: var(--text-sub);
+            font-size: 0.95rem;
+        }
+
+        /* Progress Bar */
+        .progress-section {
+            margin-bottom: 40px;
+        }
+
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: var(--text-sub);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 16px;
+            background-color: var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #0284c7, var(--accent));
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+
+        /* Countdown Cards */
+        .countdown-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .time-card {
+            background-color: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px 10px;
+            text-align: center;
+        }
+
+        .time-value {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: var(--accent);
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .time-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-sub);
+            margin-top: 5px;
+        }
+
+        /* Settings Form */
+        .settings-panel {
+            border-top: 1px solid var(--border-color);
+            padding-top: 25px;
+        }
+
+        .settings-panel h2 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: var(--text-main);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+        }
+
+        input[type="date"] {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        input[type="date"]:focus {
+            border-color: var(--accent);
+        }
+
+        button {
+            background-color: var(--accent);
+            color: #0f172a;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>🎓 Academic Degree Countdown</h1>
+            <p class="subtitle">Track every second left in your academic journey</p>
+        </header>
+
+        <!-- Degree Progress Bar -->
+        <div class="progress-section">
+            <div class="progress-labels">
+                <span>Degree Progress</span>
+                <span id="progressPercent">0%</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
+        </div>
+
+        <!-- Real-time Countdown Grid -->
+        <div class="countdown-grid">
+            <div class="time-card">
+                <div class="time-value" id="years">00</div>
+                <div class="time-label">Years</div>
+            </div>
+            <div class="time-card">
+                <div class="time-value" id="days">00</div>
+                <div class="time-label">Days</div>
+            </div>
+            <div class="time-card">
+                <div class="time-value" id="hours">00</div>
+                <div class="time-label">Hours</div>
+            </div>
+            <div class="time-card">
+                <div class="time-value" id="minutes">00</div>
+                <div class="time-label">Minutes</div>
+            </div>
+            <div class="time-card">
+                <div class="time-value" id="seconds">00</div>
+                <div class="time-label">Seconds</div>
+            </div>
+        </div>
+
+        <!-- Date Customization Settings -->
+        <div class="settings-panel">
+            <h2>⚙️ Adjust Program Dates</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="startDate">Start Date</label>
+                    <input type="date" id="startDate">
+                </div>
+                <div class="form-group">
+                    <label for="targetDate">Target Graduation Date</label>
+                    <input type="date" id="targetDate">
+                </div>
+            </div>
+            <button onclick="saveDates()">Save & Update Countdown</button>
+        </div>
+    </div>
+
+    <script>
+        // Set default dates if none exist in browser storage
+        const defaultStart = new Date();
+        const defaultTarget = new Date();
+        defaultTarget.setFullYear(defaultStart.getFullYear() + 3); // Default 3 years
+
+        // Load saved dates or fall back to defaults
+        let startDate = localStorage.getItem('deg_start') 
+            ? new Date(localStorage.getItem('deg_start')) 
+            : defaultStart;
+
+        let targetDate = localStorage.getItem('deg_target') 
+            ? new Date(localStorage.getItem('deg_target')) 
+            : defaultTarget;
+
+        // Populate input fields on page load
+        document.getElementById('startDate').value = startDate.toISOString().split('T')[0];
+        document.getElementById('targetDate').value = targetDate.toISOString().split('T')[0];
+
+        function updateTimer() {
+            const now = new Date();
+
+            // Total degree timeframe in milliseconds
+            const totalDuration = targetDate - startDate;
+            // Elapsed timeframe in milliseconds
+            const elapsed = now - startDate;
+            // Time remaining in milliseconds
+            const remaining = targetDate - now;
+
+            // 1. Calculate Progress Percentage
+            if (totalDuration > 0) {
+                let percentage = (elapsed / totalDuration) * 100;
+                percentage = Math.max(0, Math.min(100, percentage)); // Clamp between 0% and 100%
+                document.getElementById('progressBar').style.width = percentage.toFixed(2) + '%';
+                document.getElementById('progressPercent').innerText = percentage.toFixed(1) + '%';
+            }
+
+            // 2. Calculate Countdown Values
+            if (remaining > 0) {
+                const totalDays = Math.floor(remaining / (1000 * 60 * 60 * 24));
+                const years = Math.floor(totalDays / 365);
+                const days = totalDays % 365;
+                const hours = Math.floor((remaining / (1000 * 60 * 60)) % 24);
+                const minutes = Math.floor((remaining / 1000 / 60) % 60);
+                const seconds = Math.floor((remaining / 1000) % 60);
+
+                document.getElementById('years').innerText = String(years).padStart(2, '0');
+                document.getElementById('days').innerText = String(days).padStart(2, '0');
+                document.getElementById('hours').innerText = String(hours).padStart(2, '0');
+                document.getElementById('minutes').innerText = String(minutes).padStart(2, '0');
+                document.getElementById('seconds').innerText = String(seconds).padStart(2, '0');
+            } else {
+                // If countdown finishes
+                document.getElementById('years').innerText = '00';
+                document.getElementById('days').innerText = '00';
+                document.getElementById('hours').innerText = '00';
+                document.getElementById('minutes').innerText = '00';
+                document.getElementById('seconds').innerText = '00';
+                document.getElementById('progressPercent').innerText = '100% (Completed!)';
+                document.getElementById('progressBar').style.width = '100%';
+            }
+        }
+
+        function saveDates() {
+            const inputStart = document.getElementById('startDate').value;
+            const inputTarget = document.getElementById('targetDate').value;
+
+            if (!inputStart || !inputTarget) {
+                alert("Please select both a valid start date and graduation date.");
+                return;
+            }
+
+            if (new Date(inputTarget) <= new Date(inputStart)) {
+                alert("Graduation date must be after the start date!");
+                return;
+            }
+
+            // Save to browser memory
+            localStorage.setItem('deg_start', inputStart);
+            localStorage.setItem('deg_target', inputTarget);
+
+            // Update running variables
+            startDate = new Date(inputStart);
+            targetDate = new Date(inputTarget);
+
+            updateTimer();
+            alert("Dates updated successfully!");
+        }
+
+        // Run countdown update every 1 second
+        setInterval(updateTimer, 1000);
+        updateTimer();
+    </script>
+</body>
+</html>
